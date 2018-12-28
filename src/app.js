@@ -1,36 +1,37 @@
-const express = require('express');
-const path = require('path')
-const morgan = require('morgan');
-const mysql = require('mysql');
-const myConnection = require('express-myconnection')
+const express = require('express'),
+      path = require('path'),
+      morgan = require('morgan'),
+      mysql = require('mysql'),
+      myConnection = require('express-myconnection');
+
 const app = express();
 
-const customerRoutes = require('./routes/customers')
+// importing routes
+const customerRoutes = require('./routes/customer');
 
-//settings 
+// settings
 app.set('port', process.env.PORT || 3000);
-app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-//middleware
+// middlewares
 app.use(morgan('dev'));
 app.use(myConnection(mysql, {
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    port:'3306',
-    database:'crudnodejsmysql'
-},'single'));
-
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  port: 3306,
+  database: 'crudnodejsmysql'
+}, 'single'));
 app.use(express.urlencoded({extended: false}));
 
-//routes
+// routes
 app.use('/', customerRoutes);
 
-//Archivos estaticos
-app.use(express.static(path.join(__dirname, 'public')))
+// static files
+app.use(express.static(path.join(__dirname, 'public')));
 
-//Starting server
+// starting the server
 app.listen(app.get('port'), () => {
-    console.log('Server to port 3000');
+  console.log(`server on port ${app.get('port')}`);
 });
